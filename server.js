@@ -12,17 +12,18 @@ app.get('/',function(req, res){
     res.sendFile(__dirname + '/index.html');
 });
 
-io.sockets.on('connection',function(socket){
+io.on('connection',function(socket){
     connections.push(socket);
     console.log('Connected: %s sockets connected', connections.length);
+    //io.sockets.emit('connectedUser',{userNew:});
 
     //Disconnect
     socket.on('disconnect', function(data){
-        if(!socket.username) return;
         users.splice(users.indexOf(socket.username),1);
         updateUsernames();
         connections.splice(connections.indexOf(socket),1);
         console.log('Disconnected: %s sockets connected', connections.length);
+        io.sockets.emit('disconnectedUser',{userNm:socket.username});
     });
 
     //Send Message
@@ -32,10 +33,15 @@ io.sockets.on('connection',function(socket){
 
     //New User
     socket.on('new user',function(data, callback){
-        callback(true);
-        socket.username = data;
-        users.push(socket.username);
-        updateUsernames();
+        if(users.indexOf(data) != -1){
+            callback({isValid: false});
+        }
+        else{
+            callback({isValid: true});
+            socket.username = data;
+            users.push(socket.username);
+            updateUsernames();
+        }
     });
 
     function updateUsernames(){
