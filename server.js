@@ -41,10 +41,15 @@ io.on('connection',function(socket){
             socket.username = data;
             users.push(socket.username);
             updateUsernames();
+            myUsers();
         }
     });
 
     function updateUsernames(){
         io.sockets.emit('get users', users);
+    }
+
+    function myUsers(){
+        io.sockets.emit('my users', {userNew:socket.username});
     }
 });

@@ -103,8 +103,8 @@
                     }
                 });
 
-                socket.on('connectedUser',function(data){
-                    $chat.append('<div class="alert alert-success">'+data+', joined the chat!</div>');
+                socket.on('my users',function(data){
+                    $chat.append('<div class="alert alert-success">'+data.userNew+', joined the chat!</div>');
                 });
 
                 socket.on('disconnectedUser',function(data){
