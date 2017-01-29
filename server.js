@@ -28,7 +28,8 @@ io.on('connection',function(socket){
 
     //Send Message
     socket.on('send message', function(data){
-        io.sockets.emit('new message',{msg:data, user:socket.username});
+        var time = DisplayCurrentTime();
+        io.sockets.emit('new message',{msg:data, user:socket.username,sentBytime:time});
     });
 
     //New User
@@ -52,4 +53,15 @@ io.on('connection',function(socket){
     function myUsers(){
         io.sockets.emit('my users', {userNew:socket.username});
     }
+
+    function DisplayCurrentTime() {
+        var date = new Date();
+        var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+        var am_pm = date.getHours() >= 12 ? "PM" : "AM";
+        hours = hours < 10 ? "0" + hours : hours;
+        var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+        //var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+        time = hours + ":" + minutes + " " + am_pm;
+        return time;
+    };
 });

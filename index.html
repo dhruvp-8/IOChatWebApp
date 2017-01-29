@@ -85,7 +85,11 @@
            .input-field .prefix.active {
                 color: #ff4081;
               }
-
+            .timers{
+                color:grey;
+                position: absolute;
+                right:20px;
+            }
         </style>
     </head>
     <body>
@@ -118,24 +122,6 @@
                     </div>
                 </div>
             </div>
-            <!--<div class="row" id="messageArea">
-                <div class="col-md-4 col-sm-4">
-                    <div class="well">
-                        <h3>Online Users</h3>
-                        <ul class="list-group" id="users"></ul>
-                    </div>
-                </div>
-                <div class="col-md-8 col-sm-8">
-                    <div class="chat" id="chat"></div>
-                    <form id="messageForm">
-                        <div class="form-group">
-                            <label for="msg" class="control-label">Enter Message:</label>
-                            <textarea class="form-control" id="message"></textarea><br />
-                            <input type="submit" class="btn btn-md btn-primary" value="Send Message">
-                        </div>
-                    </form>
-                </div>
-            </div>-->
             <div class="row" id="messageArea">
                 <div class="col s3" id="left">
                     <ul class="collection fixed" id="users"></ul>
@@ -183,7 +169,7 @@
                 });
 
                 socket.on('new message', function(data){
-                    $chat.append('<div class="chip chip-info right"><strong>'+ data.user +': </strong>'+ data.msg +'</div><br /><br />');
+                    $chat.append('<div class="chip chip-info right"><strong>'+ data.user +': </strong>'+ data.msg +'</div><br /><br /><div class="timers">Sent&nbsp;<i class="tiny material-icons">done</i>&nbsp;'+ data.sentBytime +'</div></div><br /><br />');
                 });
 
                 $userForm.submit(function(e){
