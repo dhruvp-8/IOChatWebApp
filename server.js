@@ -46,6 +46,11 @@ io.on('connection',function(socket){
         }
     });
 
+    socket.on('typing', function(data) {
+    	io.sockets.emit("isTyping", {isTyping: data, person: socket.username});
+    });
+
+
     function updateUsernames(){
         io.sockets.emit('get users', users);
     }

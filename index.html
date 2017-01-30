@@ -30,6 +30,9 @@
             .chip-info{
                 background-color:#2962ff;
             }
+            .chip-warning{
+                background-color:#b39ddb;
+            }
             @media (min-width: 768px){
               #left {
                 position: absolute;
@@ -162,6 +165,11 @@
                 var $onErr = $('#onErr');
                 var $onCheck = $('#onCheck');
 
+                /*$message.keydown(function(e){
+                    //console.log("Hello");
+                    socket.emit('user typing',$username.val());
+                });*/
+
                 $messageForm.submit(function(e){
                     e.preventDefault();
                     socket.emit('send message', $message.val());
@@ -182,20 +190,27 @@
                         //console.log('err');
                     }
                     else{
-                        e.preventDefault();
-                        socket.emit('new user', $username.val(),function(data){
-                            if(data.isValid == true){
-                                $userFormArea.hide();
-                                $onErr.hide();
-                                $onCheck.hide();
-                                $messageArea.show();
+                        if($username.val().length < 15){
+                                e.preventDefault();
+                                socket.emit('new user', $username.val(),function(data){
+                                if(data.isValid == true){
+                                    $userFormArea.hide();
+                                    $onErr.hide();
+                                    $onCheck.hide();
+                                    $messageArea.show();
+                                }
+                                else{
+                                    //console.log("Hello");
+                                    $onCheck.show();
+                                    $onCheck.append('<div class="alert2 animated fadeInLeft" id="usn2">Please Enter another username as it already Exists!</div>');
+                                }
+                            });
+                        }
+                        else{
+                                e.preventDefault();
+                                $onErr.show();
+                                $onErr.append('<div class="alert2 animated fadeInLeft" id="usn2">Please Enter username of less than 15 characters!</div>');
                             }
-                            else{
-                                //console.log("Hello");
-                                $onCheck.show();
-                                $onCheck.append('<div class="alert2 animated fadeInLeft" id="usn2">Please Enter another username as it already Exists!</div>');
-                            }
-                        });
                         $username.val('');
                     }
                 });
@@ -216,7 +231,38 @@
                     }
                     $users.html(html);
                 });
+
+                var typing = false;
+                var timeout;
+
+                function timeoutFn(){
+                    typing = false;
+                    socket.emit('typing',false);
+                }
+
+                $message.keypress(function(e){
+                    //console.log("Hello");
+                    if(e.which !== 13){
+                        if(typing == false){
+                            typing = true;
+                            socket.emit('typing',true);
+                        }else{
+                            clearTimeout(timeout);
+                            timeout = setTimeout(timeoutFn, 3000);
+                        }
+                    }
+                });
+
+                socket.on('isTyping', function(data) {
+                if (data.isTyping) {
+                    $chat.append('<div class="chip chip-warning" id='+data.person+'>'+data.person+',is typing</div><br />');
+                    timeout = setTimeout(timeoutFn, 3000);
+                } else {
+                  $('#'+data.person+'').remove();
+                }
+              });
             });
+
         </script>
     </body>
 </html>
